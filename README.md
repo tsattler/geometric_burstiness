@@ -82,7 +82,7 @@ In order to compile the software, the following software packages are required:
  * FLANN (https://github.com/mariusmuja/flann)
  * C++11 or higher
 
-### Compilation
+### Compilation & Installation
 In order to compile the software under Linux, follow the instructions below:
 * Go into the order into which you cloned the repository.
 * Make sure the include and library directories in ```FindEIGEN.cmake``` and ```FindFLANN.cmake``` in ```cmake/``` are correctly set up.
@@ -96,3 +96,25 @@ In order to compile the software under Linux, follow the instructions below:
     
 This software was developer under Linux and has only been tested on Linux so far. However, it should also compile under Windows and Mac OS X as it does not depend on Linux-specific libraries. It might be necessary to adjust the CMake files though.
 
+# Running the Software
+After compilation and installation, the binaries required to run the software are located in the ```release/``` directory.
+## Building an Inverted Index.
+Before being able to perform queries against a database, it is necessary to build an inverted index. This is done in three stages by executing ```compute_hamming_thresholds```, ```build_partial_index```, and ```compute_index_weights```.
+
+In order to begin the process of building an inverted index, the following files are required:
+* A set of database images, e.g., stored in a directory ```db/``` (the actual filename does not matter and subdirectories can also be used). For each database image ```db/a.jpg```, a binary file ```db/a.bin``` needs to exists that stores the features extracted from the image as well as their visual word assignment. Three types of binary files are supported: ``VL_FEAT``, ``VGG binary``, ``HesAff binary``. All of which follow a similar format (see also the function ```LoadAffineSIFTFeaturesAndMultipleNNWordAssignments``` in ```src/structures.h```):
+ * The number of features stored in the file, stored as an ```uint32_t```.
+ * For each feature, 5 ```float``` values: ``x``, ``y``, ``a``, ``b``, ``c``. Here, ``x`` and ``y`` describes the position of the feature in the image. ``a``, ``b``, and ``c`` specify the elliptical region that defines the feature (more on this below).
+ * One visual word assignment, stored as a ``uint32_t``.
+ * The SIFT feature descriptor for that feature (stored as ``float``s or ``uint8_t``s.
+ * The software currently supports three types of affine covariant features:
+  * 
+
+### Computing the Hamming Thresholds
+
+### Building a Partial Index
+
+### Finalizing the Index
+
+# Acknowledgements
+This work was supported by Google’s Project Tango and EC Horizon 2020 project REPLICATE (no. 687757). The authors thank Relja Arandjelović for his invaluable help with the DisLoc algorithm.
