@@ -123,7 +123,8 @@ Once the data is prepared, the first step is to compute the threshold for each v
 * ``out``: The filename of a text file, e.g., ``thresholds_and_projection.txt``, in which the thresholds and the projection matrix will be stored.
 * ``sift_type``: The type of features, i.e., ``0`` for ``VL_FEAT``, ``1`` for ``VGG binary``, and ``2`` for ``HesAff``.
 * ``nn``: The number of nearest visual words stored in the binary files. Set this to ``1``.
-For HesAff features and the filename examples from above, the call to the executable is is
+For HesAff features and the filename examples from above, the call to the executable is 
+
 ``compute_hamming_thresholds my_binary_list.txt projection_matrix.txt thresholds_and_projection.txt 2 1``.
 
 ### Building a Partial Index
