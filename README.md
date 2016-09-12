@@ -97,7 +97,8 @@ In order to compile the software under Linux, follow the instructions below:
 This software was developer under Linux and has only been tested on Linux so far. However, it should also compile under Windows and Mac OS X as it does not depend on Linux-specific libraries. It might be necessary to adjust the CMake files though.
 
 # Running the Software
-After compilation and installation, the binaries required to run the software are located in the ```release/``` directory.
+After compilation and installation, the binaries required to run the software are located in the ```release/``` directory. 
+Calling any executable without any parameters will display the parameters of the binary together with a short explanation of them.
 ## Building an Inverted Index.
 Before being able to perform queries against a database, it is necessary to build an inverted index. This is done in three stages by executing ```compute_hamming_thresholds```, ```build_partial_index```, and ```compute_index_weights```.
 
@@ -108,13 +109,22 @@ In order to begin the process of building an inverted index, the following files
  * One visual word assignment, stored as a ``uint32_t``.
  * The SIFT feature descriptor for that feature (stored as ``float``s or ``uint8_t``s.
  * The software currently supports three feature file formats:
-   * ``VL_FEAT``: For this type of binary files, the descriptor entries are stored using ``float`` values. The affine parameters ``a``, ``b``, and ``c`` define a matrix ``M = [a, b; b, c]`` whose inverse is ``M = [a', b'; b' c']``, where the ellipse centered around the position ``x``, ``y`` of the keypoint is defined as ``a'^2 * (u - x)^2 + 2 * b' * (u - x) * (v - y) + c'^2 * (v - y)^2 = 1``.
-   * ``VGG binary`` and ``HesAff binary``: For these two type of binary files, the descriptor entries are stored using ``uint8_t`` values. The affine parameters ``a``, ``b``, and ``c`` directly define the elliptical region as ``a^2 * (u - x)^2 + 2 * b * (u - x) * (v - y) + c^2 * (v - y)^2 = 1``.
- * The software provides two executables for creating these files: ```hesaff_sift_to_binary_root_sift``` and ```compute_word_assignments```:
-   * ``hesaff_sift_to_binary_root_sift``` can be used to convert SIFT features extracted with the upright Hessian affine region detector from https://github.com/perdoch/hesaff to RootSIFT features stored in binary files. The input of the method is a text file containing the list of descriptor file names that should be converted as well as a list of output filenames, one for each input filename.
-   * ``compute_word_assignments``: Given a visual vocabulary, stored in a text file such that every row corresponds to one visual word, the number of words in that text file, the number of nearest words that should be computed (1 for the database images), and a list of filenames of the files created by ``hesaff_sift_to_binary_root_sift``, the executable computes the visual word assignments and writes the features and visual word assignments in the format described above. Each file ``x.desc`` in the list of filenames results in a file ``x.desc.postfix``, where ``postfix`` is one parameter of the method (e.g., use ``bin``).
+     * ``VL_FEAT``: For this type of binary files, the descriptor entries are stored using ``float`` values. The affine parameters ``a``, ``b``, and ``c`` define a matrix ``M = [a, b; b, c]`` whose inverse is ``M = [a', b'; b' c']``, where the ellipse centered around the position ``x``, ``y`` of the keypoint is defined as ``a'^2 * (u - x)^2 + 2 * b' * (u - x) * (v - y) + c'^2 * (v - y)^2 = 1``.
+     * ``VGG binary`` and ``HesAff binary``: For these two type of binary files, the descriptor entries are stored using ``uint8_t`` values. The affine parameters ``a``, ``b``, and ``c`` directly define the elliptical region as ``a^2 * (u - x)^2 + 2 * b * (u - x) * (v - y) + c^2 * (v - y)^2 = 1``.
+     * We provide two executables as an aid for creating these files: ```hesaff_sift_to_binary_root_sift``` and ```compute_word_assignments```:
+       * ``hesaff_sift_to_binary_root_sift``` can be used to convert SIFT features extracted with the upright Hessian affine region detector from https://github.com/perdoch/hesaff to RootSIFT features stored in binary files. The input of the method is a text file containing the list of descriptor file names that should be converted as well as a list of output filenames, one for each input filename.
+       * ``compute_word_assignments``: Given a visual vocabulary, stored in a text file such that every row corresponds to one visual word, the number of words in that text file, the number of nearest words that should be computed (1 for the database images), and a list of filenames of the files created by ``hesaff_sift_to_binary_root_sift``, the executable computes the visual word assignments and writes the features and visual word assignments in the format described above. Each file ``x.desc`` in the list of filenames results in a file ``x.desc.postfix``, where ``postfix`` is one parameter of the method (e.g., use ``bin``).
+* A text file storing a 64x128 projection matrix that can be used to compute the Hamming embeddings (see the original publication on Hamming embeddings, https://hal.inria.fr/inria-00316866/document). The matrix is stored in row-major order, e.g., each line stores one row of the projection matrix.
 
 ### Computing the Hamming Thresholds
+Once the data is prepared, the first step is to compute the threshold for each visual word that is used for the Hamming embedding. This is done using the executable ``compute_hamming_thresholds``. The input to the method are
+* ``list_bin``: A text file, e.g., ``my_binary_list.txt``, containing the filenames of all binary files containing the features and word assignments of the database images. If the database contains the images ``db/a.jpg`` and ``db/b.jpg``, ``list_bin`` should contain two lines ``db/a.bin`` and ``db/b.bin``, where ``db/a.bin`` and ``db/b.bin`` are the binary descriptor files (described above) for the two database images.
+* ``projection``: A text file, e.g., ``projection_matrix.txt``, containing the projection matrix described above.
+* ``out``: The filename of a text file, e.g., ``thresholds_and_projection.txt``, in which the thresholds and the projection matrix will be stored.
+* ``sift_type``: The type of features, i.e., ``0`` for ``VL_FEAT``, ``1`` for ``VGG binary``, and ``2`` for ``HesAff``.
+* ``nn``: The number of nearest visual words stored in the binary files. Set this to ``1``.
+For HesAff features and the filename examples from above, the call to the executable is is
+``compute_hamming_thresholds my_binary_list.txt projection_matrix.txt thresholds_and_projection.txt 2 1``.
 
 ### Building a Partial Index
 
