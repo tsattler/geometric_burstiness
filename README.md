@@ -107,8 +107,12 @@ In order to begin the process of building an inverted index, the following files
  * For each feature, 5 ```float``` values: ``x``, ``y``, ``a``, ``b``, ``c``. Here, ``x`` and ``y`` describes the position of the feature in the image. ``a``, ``b``, and ``c`` specify the elliptical region that defines the feature (more on this below).
  * One visual word assignment, stored as a ``uint32_t``.
  * The SIFT feature descriptor for that feature (stored as ``float``s or ``uint8_t``s.
- * The software currently supports three types of affine covariant features:
-  * 
+ * The software currently supports three feature file formats:
+   * ``VL_FEAT``: For this type of binary files, the descriptor entries are stored using ``float`` values. The affine parameters ``a``, ``b``, and ``c`` define a matrix ``M = [a, b; b, c]`` whose inverse is ``M = [a', b'; b' c']``, where the ellipse centered around the position ``x``, ``y`` of the keypoint is defined as ``a'^2 * (u - x)^2 + 2 * b' * (u - x) * (v - y) + c'^2 * (v - y)^2 = 1``.
+   * ``VGG binary`` and ``HesAff binary``: For these two type of binary files, the descriptor entries are stored using ``uint8_t`` values. The affine parameters ``a``, ``b``, and ``c`` directly define the elliptical region as ``a^2 * (u - x)^2 + 2 * b * (u - x) * (v - y) + c^2 * (v - y)^2 = 1``.
+ * The software provides two executables for creating these files: ```hesaff_sift_to_binary_root_sift``` and ```compute_word_assignments```:
+   * ``hesaff_sift_to_binary_root_sift``` can be used to convert SIFT features extracted with the upright Hessian affine region detector from https://github.com/perdoch/hesaff to RootSIFT features stored in binary files. The input of the method is a text file containing the list of descriptor file names that should be converted as well as a list of output filenames, one for each input filename.
+   * ``compute_word_assignments``: Given a visual vocabulary, stored in a text file such that every row corresponds to one visual word, the number of words in that text file, the number of nearest words that should be computed (1 for the database images), and a list of filenames of the files created by ``hesaff_sift_to_binary_root_sift``, the executable computes the visual word assignments and writes the features and visual word assignments in the format described above. Each file ``x.desc`` in the list of filenames results in a file ``x.desc.postfix``, where ``postfix`` is one parameter of the method (e.g., use ``bin``).
 
 ### Computing the Hamming Thresholds
 
