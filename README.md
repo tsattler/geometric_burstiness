@@ -168,7 +168,9 @@ An example call to ``query`` is
 ``query list_my_queries.txt list_my_db_images.txt inverted_index.bin results/my_dataset 2 list_my_db_image_positions.txt`` .
 
 # Disclaimer
-This is a revised version of the implementation used for the CVPR 2016 paper on geometric burstiness.
+This is a revised version of the implementation used for the CVPR 2016 paper on geometric burstiness. Compared to the original implementation used for the experiments presented in the paper, a bug preventing that votes are cast for the last image in an inverted file was fixed (we thank Johannes L. Schönberger for pointing out the bug). Originally, the re-ranking code was implemented in Matlab. As such, the results obtained with our re-implementation in C++ might differ slightly.
+
+Notice that some parameters of our method, such as the number of nearest words (5) used in ``query`` or the number of visual words expected in the vocabulary (200k) in ``compute_hamming_thresholds`` are hardcoded.
 
 # Acknowledgements
 This work was supported by Google’s Project Tango and EC Horizon 2020 project REPLICATE (no. 687757). The authors thank Relja Arandjelović for his invaluable help with the DisLoc algorithm.
