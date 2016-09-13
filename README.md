@@ -101,7 +101,7 @@ This software was developer under Linux and has only been tested on Linux so far
 # Running the Software
 After compilation and installation, the binaries required to run the software are located in the ```release/``` directory. 
 Calling any executable without any parameters will display the parameters of the binary together with a short explanation of them.
-## Building an Inverted Index.
+## Building an Inverted Index
 Before being able to perform queries against a database, it is necessary to build an inverted index. This is done in three stages by executing ```compute_hamming_thresholds```, ```build_partial_index```, and ```compute_index_weights```.
 
 In order to begin the process of building an inverted index, the following files are required:
@@ -149,6 +149,8 @@ The final step is to compute the idf-weights for each image in the database, whi
 The commandline tool designed for this purpose is ``compute_index_weights``, which requires only one parameters ``index`` that specifies the filename of the inverted index created via ``build_partial_index``. 
 
 An example call is ``compute_index_weights inverted_index.bin``, which will create a binary file ``inverted_index.bin.weights`` that contains the weights.
+
+## Querying an Inverted Index
 
 # Acknowledgements
 This work was supported by Google’s Project Tango and EC Horizon 2020 project REPLICATE (no. 687757). The authors thank Relja Arandjelović for his invaluable help with the DisLoc algorithm.
