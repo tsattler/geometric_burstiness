@@ -92,7 +92,7 @@ In order to compile the software under Linux, follow the instructions below:
 * Create a directory for installation: ```mkdir release/```
 * Compile the source code:
  * ```cd build/```
- * ```cmake cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../release ..```
+ * ```cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../release ..```
  * ```make -j```
  * ```make install```
     
@@ -151,7 +151,7 @@ The commandline tool designed for this purpose is ``compute_index_weights``, whi
 An example call is ``compute_index_weights inverted_index.bin``, which will create a binary file ``inverted_index.bin.weights`` that contains the weights.
 
 ## Querying an Inverted Index
-Given the inverted index constructed as described above, we can now query the index with a set of query images using the executable ``query``. For this, a binary file containing the features and visual word assignments is required for each query image. The file format is the same as for building the query with the exception that the 5 closest words need to be stored in the files for each feature in the query image.
+Given the inverted index constructed as described above, we can now query the index with a set of query images using the executable ``query``. For this, a binary file containing the features and visual word assignments is required for each query image. The file format is the same as for building the query with the exception that the 5 closest words need to be stored in the files for each feature in the query image. Also, notice that the command line tools ``hesaff_sift_to_binary_root_sift`` and ``compute_word_assignments`` are provided for convinience but were not used to compute the visual word assignments used in the paper.
 
 In addition to the query images and their descriptor files, a geo-coordinate is required for each database image. These geo-coordinates should be given in a coordinate system where the Euclidean distance between two points corresponds to a distance in meters.
 
