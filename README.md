@@ -163,7 +163,12 @@ In order to query an index ``inverted_index.bin``, the executable ``query`` is u
 * ``sift_type``: Same as above.
 * ``pos_db``: A text file containing a 2D geo-location for each database image, one line per database image. The file needs to have the same ordering as ``list_db``.
 
+An example call to ``query`` is
+
+``query list_my_queries.txt list_my_db_images.txt inverted_index.bin results/my_dataset 2 list_my_db_image_positions.txt`` .
+
 # Disclaimer
+This is a revised version of the implementation used for the CVPR 2016 paper on geometric burstiness.
 
 # Acknowledgements
 This work was supported by Google’s Project Tango and EC Horizon 2020 project REPLICATE (no. 687757). The authors thank Relja Arandjelović for his invaluable help with the DisLoc algorithm.
