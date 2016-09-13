@@ -28,7 +28,7 @@ as a baseline system and adds different scoring functions based on which the ima
 * re-ranking based on the inter-place geometric burstiness measure, which downweights the impact of features found in the query image that are inliers to many places in the scene and also takes the popularity of the different places into account.
 
 ## License and Citing 
-This software is licensed under the BSD 3-Clause License (also see https://opensource.org/licenses/BSD-3-Clause):
+This software is licensed under the BSD 3-Clause License (also see https://opensource.org/licenses/BSD-3-Clause) for **non-commercial use**:
 
     Copyright (c) 2016, ETH Zurich
     All rights reserved.
@@ -73,6 +73,8 @@ If you are using this software for a scientific publication, you need to cite th
         booktitle    = "Asian Conference on Computer Vision",
         year         = "2014",
     }
+
+If you are interested in using this software **commercially**, please contact Torsten Sattler (torsten.sattler@inf.ethz.ch).
     
 ## Compilation & Installation
 ### Requirements
