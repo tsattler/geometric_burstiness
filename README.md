@@ -172,5 +172,11 @@ This is a revised version of the implementation used for the CVPR 2016 paper on 
 
 Notice that some parameters of our method, such as the number of nearest words (5) used in ``query`` or the number of visual words expected in the vocabulary (200k) in ``compute_hamming_thresholds`` are hardcoded.
 
+The main intention for releasing this software is to stimulate further research on visual place recognition and to allow other researchers to compare their method against our approach. While we might update the software from time to time, this package will not be regularly maintained or updated.
+
+# Questions & Suggestions
+For questions or suggestions, please contact Torsten Sattler (torsten.sattler@inf.ethz.ch).
+
+
 # Acknowledgements
 This work was supported by Google’s Project Tango and EC Horizon 2020 project REPLICATE (no. 687757). The authors thank Relja Arandjelović for his invaluable help with the DisLoc algorithm.
