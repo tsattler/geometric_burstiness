@@ -4,7 +4,7 @@
 This is an implementation of the state-of-the-art visual place recognition algorithm described in 
 
     @inproceedings{Sattler16CVPR,
-        author = {Sattler, Torsten and Havlena, Michal and Schindler, Konrad and Pollefeys},
+        author = {Sattler, Torsten and Havlena, Michal and Schindler, Konrad and Pollefeys, Marc},
         title = {Large-Scale Location Recognition And The Geometric Burstiness Problem},
         booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
         year={2016},
@@ -61,7 +61,7 @@ This software is licensed under the BSD 3-Clause License (also see https://opens
 If you are using this software for a scientific publication, you need to cite the two following publications:
 
     @inproceedings{Sattler16CVPR,
-        author = {Sattler, Torsten and Havlena, Michal and Schindler, Konrad and Pollefeys},
+        author = {Sattler, Torsten and Havlena, Michal and Schindler, Konrad and Pollefeys, Marc},
         title = {Large-Scale Location Recognition And The Geometric Burstiness Problem},
         booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
         year={2016},
