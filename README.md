@@ -151,6 +151,19 @@ The commandline tool designed for this purpose is ``compute_index_weights``, whi
 An example call is ``compute_index_weights inverted_index.bin``, which will create a binary file ``inverted_index.bin.weights`` that contains the weights.
 
 ## Querying an Inverted Index
+Given the inverted index constructed as described above, we can now query the index with a set of query images using the executable ``query``. For this, a binary file containing the features and visual word assignments is required for each query image. The file format is the same as for building the query with the exception that the 5 closest words need to be stored in the files for each feature in the query image.
+
+In addition to the query images and their descriptor files, a geo-coordinate is required for each database image. These geo-coordinates should be given in a coordinate system where the Euclidean distance between two points corresponds to a distance in meters.
+
+In order to query an index ``inverted_index.bin``, the executable ``query`` is used. It has the following parameters:
+* ``list_sifts``: A text file containing the list of filename prefixes for the query images. For each query image ``query/a.jpg`` a line ``query/a.`` should be included in the file. The program assumes that the binary descriptor file of ``a.jpg`` is stored under ``query/a.bin``.
+* ``list_db``: A text file containing the filenames of the database images. The ordering in this file has to be the same as in the ``list_bin`` file used for ``build_partial_index``.
+* ``index``: The filename of the inverted index that should be used.
+* ``outfile_prefix``: ``query`` will generate 6 text files, one for each type of re-ranking (based on the retrieval scores, the number of inliers, the effective inlier count, the inter-image geometric burstiness measure, the inter-place burstiness measure, and the inter-place plus popularity measure). The files will be stored as ``outfile_prefix.retrieval_ranking.txt``, ``outfile_prefix.inlier_count_ranking.txt``, etc. Each line has the format ``query_name.jpg database_name score``, where ``query_name.`` is one of the filenames from ``list_sifts`` and ``database_name`` is the filename of a database image (extracted from ``list_db``). ``score`` is the corresponding re-ranking score for the two images. For each query image, the database images are giving in decreasing order of re-ranking scores and the pairs are ordered based on the query images (i.e., first all retrieved images for the first query image are reported in descending order of importance, than the same for the second image, etc.).
+* ``sift_type``: Same as above.
+* ``pos_db``: A text file containing a 2D geo-location for each database image, one line per database image. The file needs to have the same ordering as ``list_db``.
+
+# Disclaimer
 
 # Acknowledgements
 This work was supported by Google’s Project Tango and EC Horizon 2020 project REPLICATE (no. 687757). The authors thank Relja Arandjelović for his invaluable help with the DisLoc algorithm.
