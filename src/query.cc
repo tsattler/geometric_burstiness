@@ -67,6 +67,15 @@ const int kNumSpatial = 200;
 // loaded for the query images.
 const int kNumNNWords = 5;
 
+// Compares twor (image id, vectorof inlier ids) pairs and returns true if the
+// first pair has more images.
+template<typename T1, typename T2>
+inline bool CompareBasedOnNumberOfInliers(
+    const std::pair<T1, std::vector<T2> >& a,
+    const std::pair<T1, std::vector<T2> >& b) {
+  return a.second.size() > b.second.size();
+}
+
 int main (int argc, char **argv)
 {
   if (argc < 7) {
@@ -433,6 +442,12 @@ int main (int argc, char **argv)
     std::vector<std::pair<double, int> > ranking_inter_image_burstiness;
     geometric_burstiness::reranking::ReRankingInterImageGeometricBurstiness(
         db_inlier_ids_pairs, num_features, &ranking_inter_image_burstiness);
+
+    // For inter-place burstiness ranking, the list of retrieved images needs
+    // to be in descending order of inliers. This is achieved by sorting.
+    // We use stable sort to preserve the initial ranking if required.
+    std::stable_sort(db_inlier_ids_pairs.begin(), db_inlier_ids_pairs.end(),
+                     CompareBasedOnNumberOfInliers<int, int>);
 
     std::vector<std::pair<double, int> > ranking_inter_place_burstiness;
     std::vector<std::pair<double, int> > ranking_inter_place_pop_burstiness;
