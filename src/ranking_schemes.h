@@ -172,6 +172,8 @@ void ReRankingInterImageGeometricBurstiness(
 // standard inter-place scheme as well as based on the popularity-weighted
 // scheme. A stable sorting method is used, i.e., database images with the same
 // score are ranked based on the order of the input list.
+// IMPORTANT: To reproduce the results from the paper, inliers_per_db should be
+//            sorted in descending number of inliers.
 void ReRankingInterPlaceGeometricBurstiness(
     const std::vector<std::pair<int, std::vector<int> > >& inliers_per_db,
     int num_query_features, const Eigen::Matrix2Xd& db_pos,
