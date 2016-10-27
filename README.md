@@ -1,3 +1,6 @@
+## Important Bugfixes
+* 10/27/2016: Fixed bug in the inter-place burstiness weighting schemes. In order to reproduce the results from the paper, the input inliers_per_db for the function ReRankingInterPlaceGeometricBurstiness should be sorted in descending number of inliers. Previously, it was sorted based on the retrieval scores only. This is now fixed.
+
 #  Large-Scale Location Recognition And The Geometric Burstiness Problem
 
 ## About
