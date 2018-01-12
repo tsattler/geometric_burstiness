@@ -1,11 +1,11 @@
 # - Try to find FLANN
 # Once done this will define
-#  
+#
 # FLANN_FOUND           - system has FLANN
 # FLANN_INCLUDE_DIR - the FLANN include directory
 # FLANN_LIBRARY         - Link these to use FLANN
 # FLANN_LIBRARY_DIR  - Library DIR of FLANN
-#   
+#
 
 IF (FLANN_INCLUDE_DIR)
  # Already in cache, be silent

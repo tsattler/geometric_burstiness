@@ -28,3 +28,7 @@ set( CMAKE_DEBUG_POSTFIX "d" )
 
 add_subdirectory (src)
 
+
+add_subdirectory (ext/pybind)
+file (GLOB SOURCES src/_fast_spatial_matching.cpp src/**/*.cpp)
+pybind11_add_module (_fast_spatial_matching ${SOURCES})
