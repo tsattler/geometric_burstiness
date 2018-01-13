@@ -111,12 +111,9 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
                 # GeoBurst compatible Keypoint:                
                 #     a * x^2 + b * xy + c * y^2 = 1 describes all points on the sphere
                 self.feature1.b_ = query_keypoint[3] * 2
-                self.feature1.c_ = query_keypoint[4]
-                
-                # TODO: Implement a, b, c for OpenCV Keypoint. 
+                self.feature1.c_ = query_keypoint[4]               
 
                 self.features2 = []
-
                 # TODO: see if we need to pass correct word_id for FSM.
                 self.word_ids = [] 
 
@@ -149,12 +146,17 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
         #     print(m.word_ids)
 
         matcher = geoburst.FastSpatialMatching()        
-        # TODO: check do we need sort for matches. for FSM
+        # TODO: check do we need sort by size of features2 (smaller first) for matches. for FSM
+        print("num matches:", len(affine_matches))
         transform, inliers = matcher.perform_spatial_verification([m.get_object() for _, m in affine_matches.items()])
-        print("transform from SFM:", transform)
-        print("inliers from SFM:", inliers)
-        inlier_idxs = []
+        # print("transform from SFM:", transform)
+        print("num inliers from SFM:", len(inliers))
+        
         # TODO: convert inliers to inlier_match
+        inlier_idxs = []
+        for a, b in inliers:
+            inlier_idxs.append(a)
+        
 
     inlier_match = []
     for idx in inlier_idxs:

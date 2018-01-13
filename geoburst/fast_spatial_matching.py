@@ -13,13 +13,7 @@ class FastSpatialMatching ():
         # if len(matches) == 0:
         #     # handling passed empty list of matches
         #     return None, []
-
-        out_transform = Transformation()
-        out_inliers = []
         print("invoke PerformSpatialVerification()")
-        self._impl.PerformSpatialVerification(matches, out_transform, out_inliers)
-        return out_transform, out_inliers
-
-    
-        
-     
+        best_num_inliers, transform, inliers = self._impl.PerformSpatialVerification(matches)
+        print("best_num_inliers:", best_num_inliers)
+        return transform, inliers

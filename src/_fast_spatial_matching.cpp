@@ -36,6 +36,13 @@ class PyAffineFeatureMatch : public AffineFeatureMatch {
 };
 
 class PyFastSpatialMatching : public FastSpatialMatching<PyAffineFeatureMatch, FeatureGeometryAffine, Similarity5DOF> {
+    public:
+        auto pyPerformSpatialVerification(const std::vector<PyAffineFeatureMatch>& matches) { 
+            std::vector<std::pair<int, int> > inlier_ids;
+            Transformation transform;                    
+            int best_inliner_num = PyFastSpatialMatching::PerformSpatialVerification(matches, &transform, &inlier_ids); 
+            return std::make_tuple(best_inliner_num, transform, inlier_ids);
+        }
 };
 
 PYBIND11_MODULE(_fast_spatial_matching, m) {
@@ -69,5 +76,5 @@ PYBIND11_MODULE(_fast_spatial_matching, m) {
 
     py::class_<PyFastSpatialMatching>(m, "PyFastSpatialMatching")
             .def(py::init<> ())
-            .def("PerformSpatialVerification", &PyFastSpatialMatching::PerformSpatialVerification);
+            .def("PerformSpatialVerification", &PyFastSpatialMatching::pyPerformSpatialVerification);
 }
