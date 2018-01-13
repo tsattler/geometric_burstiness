@@ -69,6 +69,7 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
 
     # Perform geometric verification using RANSAC.
     # ransac_lib = "scikit"
+    # ransac_lib = "opencv"
     ransac_lib = "fsm"
     if ransac_lib == "opencv":
         src_pts = np.float32([cv2.KeyPoint(kp1[m.queryIdx][0], kp1[m.queryIdx][1], 1).pt for m in matches ]).reshape(-1,1,2)
@@ -76,8 +77,8 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
 
         M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
         matchesMask = mask.ravel().tolist()
-        # print(matchesMask)
-        inlier_idxs = np.nonzero(matchesMask)[0]
+        
+        inlier_idxs = np.nonzero(matchesMask)[0]        
     elif ransac_lib == "scikit":
         locations_1_to_use = []
         locations_2_to_use = []
@@ -106,23 +107,31 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
                 self.feature1.feature_id_ = query_feature_index
                 self.feature1.setPosition(query_keypoint[0], query_keypoint[1])
                 self.feature1.a_ = query_keypoint[2]
+                # TODO: check if 2b is correct or b is correct. 
+
                 # Input Keypoint: u,v,a,b,c    in    a(x-u)(x-u)+2b(x-u)(y-v)+c(y-v)(y-v)=1
                 #     with (0,0) at image top left corner
                 # GeoBurst compatible Keypoint:                
                 #     a * x^2 + b * xy + c * y^2 = 1 describes all points on the sphere
-                self.feature1.b_ = query_keypoint[3] * 2
+                self.feature1.b_ = query_keypoint[3]
                 self.feature1.c_ = query_keypoint[4]               
 
                 self.features2 = []
                 # TODO: see if we need to pass correct word_id for FSM.
                 self.word_ids = [] 
 
+                # Savining index of original match of featre matching process. 
+                # answers to where this affine match correspondence come from.
+                self.match_ids = []
+
             def get_object(self):
                 return AffineFeatureMatch(self.feature1, self.features2, self.word_ids)
 
         affine_matches = {}      
+        # TODO: handle multi match. 
+        # when one key points matches multiple key points. check data structure for this and fsm. 
 
-        for m in matches:
+        for match_idx, m in enumerate(matches):
             if not m.queryIdx in affine_matches:
                 am = AffineMatch(m.queryIdx, kp1[m.queryIdx])
                 affine_matches[m.queryIdx] = am
@@ -134,10 +143,11 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
             feature2.feature_id_ = m.trainIdx
             feature2.setPosition(kp2[m.trainIdx][0], kp2[m.trainIdx][1])
             feature2.a_ = kp2[m.trainIdx][2]
-            feature2.b_ = kp2[m.trainIdx][3]*2
+            feature2.b_ = kp2[m.trainIdx][3]
             feature2.c_ = kp2[m.trainIdx][4]
             am.features2.append(feature2)
-            am.word_ids.append(0) # pass dummy word_id. We may don't use value for FSM. 
+            am.word_ids.append(m.trainIdx) # pass dummy word_id. We may don't use value for FSM. 
+            am.match_ids.append(match_idx)
 
         # for _, m in affine_matches.items():
         #     print()
@@ -148,14 +158,19 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
         matcher = geoburst.FastSpatialMatching()        
         # TODO: check do we need sort by size of features2 (smaller first) for matches. for FSM
         print("num matches:", len(affine_matches))
-        transform, inliers = matcher.perform_spatial_verification([m.get_object() for _, m in affine_matches.items()])
+        match_list = []
+        match_obj_list = []        
+        for _, m in affine_matches.items():
+            match_obj_list.append(m.get_object())
+            match_list.append(m)
+        transform, inliers = matcher.perform_spatial_verification(match_obj_list)
         # print("transform from SFM:", transform)
         print("num inliers from SFM:", len(inliers))
-        
-        # TODO: convert inliers to inlier_match
+                
         inlier_idxs = []
-        for a, b in inliers:
-            inlier_idxs.append(a)
+        for match_idx, feature_idx in inliers:
+            idx = match_list[match_idx].match_ids[feature_idx]
+            inlier_idxs.append(idx)
         
 
     inlier_match = []
