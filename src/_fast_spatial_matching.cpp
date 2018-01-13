@@ -5,6 +5,8 @@
 #include "fast_spatial_matching.h"
 #include "geometric_transforms.h"
 
+namespace py = pybind11;
+
 using geometric_burstiness::geometry::FastSpatialMatching;
 using geometric_burstiness::geometry::Transformation;
 
