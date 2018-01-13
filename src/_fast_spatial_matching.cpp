@@ -45,7 +45,7 @@ PYBIND11_MODULE(_fast_spatial_matching, m) {
     py::class_<FeatureGeometryAffine>(m, "FeatureGeometryAffine")
         .def(py::init<>())
         .def_readwrite("feature_id_", &FeatureGeometryAffine::feature_id_)
-        .def_readwrite("x_", &FeatureGeometryAffine::x_)
+        .def("setPosition", &FeatureGeometryAffine::setPosition)
         .def_readwrite("a_", &FeatureGeometryAffine::a_)
         .def_readwrite("b_", &FeatureGeometryAffine::b_)
         .def_readwrite("c_", &FeatureGeometryAffine::c_);

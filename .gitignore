@@ -1,1 +1,12 @@
+# Editor Junk
+.vscode
+
+# Python lib junk
+*.egg-info
+
+# Python junk
+__pycache__
+
+# compile junk
 build
+*.so
