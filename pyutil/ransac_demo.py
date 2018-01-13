@@ -3,7 +3,34 @@ import numpy as np
 from skimage.measure import ransac as _ransac
 from skimage.transform import AffineTransform
 import matplotlib.pyplot as plt
+import time
 
+import geoburst
+from geoburst.geometric_transforms import FeatureGeometryAffine, AffineFeatureMatch
+fsmmatcher = geoburst.FastSpatialMatching()
+
+class AffineMatch:
+    def __init__(self, query_feature_index, query_keypoint):
+        self.feature1 = FeatureGeometryAffine()
+        self.feature1.feature_id_ = query_feature_index
+        self.feature1.setPosition(query_keypoint[0], query_keypoint[1])
+        self.feature1.a_ = query_keypoint[2]
+        # TODO: check if 2b is correct or b is correct. 
+
+        # Input Keypoint: u,v,a,b,c    in    a(x-u)(x-u)+2b(x-u)(y-v)+c(y-v)(y-v)=1
+        #     with (0,0) at image top left corner
+        # GeoBurst compatible Keypoint:                
+        #     a * x^2 + b * xy + c * y^2 = 1 describes all points on the sphere
+        self.feature1.b_ = query_keypoint[3]
+        self.feature1.c_ = query_keypoint[4]               
+
+        self.features2 = []
+
+        # For SFM, below var does not affet the result
+        self.word_ids = [] 
+
+    def get_object(self):
+        return AffineFeatureMatch(self.feature1, self.features2, self.word_ids)
 
 def get_matches(des1, des2, method='BRUTE_FORCE', is_binary_descriptor=False):
     # create BFMatcher object
@@ -69,13 +96,20 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
 
     # Perform geometric verification using RANSAC.
     # ransac_lib = "scikit"
-    # ransac_lib = "opencv"
-    ransac_lib = "fsm"
+    ransac_lib = "opencv"
+    # ransac_lib = "fsm"
     if ransac_lib == "opencv":
         src_pts = np.float32([cv2.KeyPoint(kp1[m.queryIdx][0], kp1[m.queryIdx][1], 1).pt for m in matches ]).reshape(-1,1,2)
         dst_pts = np.float32([cv2.KeyPoint(kp2[m.trainIdx][0], kp2[m.trainIdx][1], 1).pt for m in matches ]).reshape(-1,1,2)
 
-        M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+        iter_num = 20
+        start = time.time()
+        for i in range(iter_num):
+            M, mask = cv2.findHomography(src_pts, dst_pts, cv2.RANSAC, 5.0)
+        # print('num_inliner:', len(inliner))
+        end = time.time()
+        print("time for ransac inlier:{}".format(end - start))
+        
         matchesMask = mask.ravel().tolist()
         
         inlier_idxs = np.nonzero(matchesMask)[0]        
@@ -97,47 +131,12 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
 
         inlier_idxs = np.nonzero(inliers)[0]
     elif ransac_lib == "fsm":
-        import geoburst
-        from geoburst.geometric_transforms import FeatureGeometryAffine, AffineFeatureMatch        
-
-        # TODO: convert matches to AffineMatches
-        class AffineMatch:
-            def __init__(self, query_feature_index, query_keypoint):
-                self.feature1 = FeatureGeometryAffine()
-                self.feature1.feature_id_ = query_feature_index
-                self.feature1.setPosition(query_keypoint[0], query_keypoint[1])
-                self.feature1.a_ = query_keypoint[2]
-                # TODO: check if 2b is correct or b is correct. 
-
-                # Input Keypoint: u,v,a,b,c    in    a(x-u)(x-u)+2b(x-u)(y-v)+c(y-v)(y-v)=1
-                #     with (0,0) at image top left corner
-                # GeoBurst compatible Keypoint:                
-                #     a * x^2 + b * xy + c * y^2 = 1 describes all points on the sphere
-                self.feature1.b_ = query_keypoint[3]
-                self.feature1.c_ = query_keypoint[4]               
-
-                self.features2 = []
-                # TODO: see if we need to pass correct word_id for FSM.
-                self.word_ids = [] 
-
-                # Savining index of original match of featre matching process. 
-                # answers to where this affine match correspondence come from.
-                self.match_ids = []
-
-            def get_object(self):
-                return AffineFeatureMatch(self.feature1, self.features2, self.word_ids)
-
-        affine_matches = {}      
+        affine_matches = []    
         # TODO: handle multi match. 
         # when one key points matches multiple key points. check data structure for this and fsm. 
 
         for match_idx, m in enumerate(matches):
-            if not m.queryIdx in affine_matches:
-                am = AffineMatch(m.queryIdx, kp1[m.queryIdx])
-                affine_matches[m.queryIdx] = am
-            else:
-                print("dup")
-                am = affine_matches[m.queryIdx]
+            am = AffineMatch(m.queryIdx, kp1[m.queryIdx])
 
             feature2 = FeatureGeometryAffine()
             feature2.feature_id_ = m.trainIdx
@@ -145,39 +144,40 @@ def get_ransac_inlier(kp1, kp2, des1, des2,
             feature2.a_ = kp2[m.trainIdx][2]
             feature2.b_ = kp2[m.trainIdx][3]
             feature2.c_ = kp2[m.trainIdx][4]
+            
             am.features2.append(feature2)
             am.word_ids.append(m.trainIdx) # pass dummy word_id. We may don't use value for FSM. 
-            am.match_ids.append(match_idx)
 
-        # for _, m in affine_matches.items():
-        #     print()
-        #     print(m.feature1)
-        #     print(m.features2)
-        #     print(m.word_ids)
-
-        matcher = geoburst.FastSpatialMatching()        
+            affine_matches.append(am)
+                
         # TODO: check do we need sort by size of features2 (smaller first) for matches. for FSM
-        print("num matches:", len(affine_matches))
-        match_list = []
+        # print("num matches:", len(affine_matches))
+        match_list = affine_matches
         match_obj_list = []        
-        for _, m in affine_matches.items():
+        for m in affine_matches:
             match_obj_list.append(m.get_object())
-            match_list.append(m)
-        transform, inliers = matcher.perform_spatial_verification(match_obj_list)
+
+        iter_num = 20
+        start = time.time()
+        for i in range(iter_num):
+            transform, inliers = fsmmatcher.perform_spatial_verification(match_obj_list)
+        # print('num_inliner:', len(inliner))
+        end = time.time()
+        print("time for ransac inlier:{}".format(end - start))
+        
         # print("transform from SFM:", transform)
-        print("num inliers from SFM:", len(inliers))
+        # print("num inliers from SFM:", len(inliers))
                 
         inlier_idxs = []
         for match_idx, feature_idx in inliers:
-            idx = match_list[match_idx].match_ids[feature_idx]
-            inlier_idxs.append(idx)
+            inlier_idxs.append(match_idx)
         
 
     inlier_match = []
     for idx in inlier_idxs:
         inlier_match.append(matches[idx])
 
-    print("num kp1: {}, kp2: {}, match: {}, inlier: {}".format(len(kp1), len(kp2), len(matches), len(inlier_match)))
+    # print("num kp1: {}, kp2: {}, match: {}, inlier: {}".format(len(kp1), len(kp2), len(matches), len(inlier_match)))
     return inlier_match
 
 def draw_ransac(img1, img2, kp1, kp2, des1, kes2,
@@ -247,9 +247,16 @@ def main():
 
     img1 = cv2.imread('../sample/all_souls_000026.jpg') # query image
     img2 = cv2.imread('../sample/all_souls_000055.jpg')
-
+    
     inliner = get_ransac_inlier(kp1, kp2, des1, des2, False, 'BRUTE_FORCE', None)
-    print('num_inliner:', len(inliner))
+    
+    # iter_num = 20
+    # start = time.time()
+    # for i in range(iter_num):
+    #     inliner = get_ransac_inlier(kp1, kp2, des1, des2, False, 'BRUTE_FORCE', None)
+    # # print('num_inliner:', len(inliner))
+    # end = time.time()
+    # print("time for ransac inlier:{}".format(end - start))
 
     # ransac and plot
     draw_ransac(img1, img2, kp1, kp2, des1, des2, False, 'BRUTE_FORCE', None)
