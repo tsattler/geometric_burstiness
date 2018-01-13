@@ -77,7 +77,7 @@ class CMakeBuild(build_ext):
 
 
 setup(
-    name='geo_burst',
+    name='geoburst',
     version='1.0.0',
     author='Insik Kim',
     author_email='insik92@gmail.com',

@@ -67,7 +67,7 @@ struct Transformation {
 // vocabularies and fast spatial matching. CPVR 2007.
 // The templates are the types of features and the class used to compute the
 // transformation between the images.
-template <class FeatureType, class TransformationType>
+template <class FeatureMatch, class FeatureType, class TransformationType>
 class FastSpatialMatching {
  public:
   // Performs fast spatial matching. Returns the number of inliers, the
@@ -79,7 +79,7 @@ class FastSpatialMatching {
   // a point x1 in the first image transforms to a point x1' = A * x1 + t in the
   // second image.
   int PerformSpatialVerification(
-      const std::vector<FeatureMatch<FeatureType> >& matches,
+      const std::vector<FeatureMatch>& matches,
       Transformation* transform,
       std::vector<std::pair<int, int> >* inlier_ids) const {
     TransformationType transformation_provider;
@@ -134,7 +134,7 @@ class FastSpatialMatching {
   // Lebeda, Matas, Chum. Fixing the Locally Optimized RANSAC. BMVC 2012.
   // Uses the parameter settings for homography estimation proposed in the
   // paper.
-  void LocalOptimization(const std::vector<FeatureMatch<FeatureType> >& matches,
+  void LocalOptimization(const std::vector<FeatureMatch>& matches,
                          std::vector<std::pair<int, int> >* inlier_ids,
                          Transformation* transform) const {
     // The parameter setting proposed in the paper.
@@ -187,7 +187,7 @@ class FastSpatialMatching {
 
   // Evaluates a transformation hypothesis and returns the number of inliers
   // as well as the indices of the inliers.
-  int EvaluateHypothesis(const std::vector<FeatureMatch<FeatureType> >& matches,
+  int EvaluateHypothesis(const std::vector<FeatureMatch>& matches,
                          float transfer_error_treshold,
                          float scale_change_threshold,
                          const Transformation& T,
@@ -233,7 +233,7 @@ class FastSpatialMatching {
   // a least squares solution of the transformation. Returns false if the
   // estimate could not be compute.
   bool LeastSquaresEstimate(
-      const std::vector<FeatureMatch<FeatureType> >& matches,
+      const std::vector<FeatureMatch>& matches,
       const std::vector<std::pair<int, int> >& inlier_ids,
       const std::vector<int>& sample, Transformation* T) const {
     int sample_size = static_cast<int>(sample.size());
@@ -266,7 +266,7 @@ class FastSpatialMatching {
 
   // Performs iterative least squares starting with an initial transformation.
   void IterativeLeastSquares(
-      const std::vector<FeatureMatch<FeatureType> >& matches,
+      const std::vector<FeatureMatch>& matches,
       const Transformation& T, std::default_random_engine* rng,
       std::vector<std::pair<int, int> >* inlier_ids,
       Transformation* transform) const {
