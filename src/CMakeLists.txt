@@ -26,6 +26,9 @@ add_executable(compute_word_assignments compute_word_assignments.cc hesaff_sift.
 add_executable(build_partial_index build_partial_index.cc structures.h inverted_file.h inverted_index.h)
 add_executable(compute_hamming_thresholds compute_hamming_thresholds.cc structures.h inverted_file.h inverted_index.h)
 
+file (GLOB SOURCES _fast_spatial_matching.cpp *.cpp)
+pybind11_add_module (_fast_spatial_matching ${SOURCES})
+
 target_link_libraries(compute_word_assignments ${FLANN_LIBRARY})
 
 install( PROGRAMS ${CMAKE_BINARY_DIR}/src/compute_index_weights
