@@ -85,7 +85,9 @@ If you are interested in using this software **commercially**, please contact To
 In order to compile the software, the following software packages are required:
  * CMake version 2.6 or higher (http://www.cmake.org/)
  * Eigen 3.2.1 or higher (http://eigen.tuxfamily.org/)
+      * Download. do cmake, make, make install.
  * FLANN (https://github.com/mariusmuja/flann)
+      * Download master branch. do cmake, make, make install.
  * C++11 or higher
 
 ### Compilation & Installation
