@@ -225,7 +225,7 @@ void ReRankingInterPlaceGeometricBurstiness(
     // Creates a new place and updates the minimum distance for each database
     // image to its nearest place.
     for (int i = 1; i < num_db_images; ++i) {
-      double dist = (db_pos.col(inliers_per_db[0].first)
+      double dist = (db_pos.col(inliers_per_db[max_index].first)
           - db_pos.col(inliers_per_db[i].first)).squaredNorm();
       if (dist < min_distance_to_nearest_place[i]) {
         min_distance_to_nearest_place[i] = dist;
