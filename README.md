@@ -1,4 +1,5 @@
 ## Important Bugfixes / Notes
+* 06/29/2018: Fixed bug in the inter-place burstiness voting scheme that prevented it from functioning properly.
 * 01/08/2018: Please note that the RootSIFT features used in this program have descriptor entries in the range [0, 255]. This quantization is used to severely reduce memory requirements (1 byte per entry instead of 4 bytes). Please make sure that you do not normalize the RootSIFT descriptors before training the codebook.
 * 10/27/2016: Fixed bug in the inter-place burstiness weighting schemes. In order to reproduce the results from the paper, the input inliers_per_db for the function ReRankingInterPlaceGeometricBurstiness should be sorted in descending number of inliers. Previously, it was sorted based on the retrieval scores only. This is now fixed.
 
