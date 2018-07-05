@@ -13,4 +13,4 @@ ENDIF (EIGEN3_INCLUDE_DIR)
 
                 
 FIND_PATH(EIGEN3_INCLUDE_DIR Eigen/Dense
-	  PATHS "/usr/include/eigen3")
+	  PATHS "/usr/local/include/eigen3")
