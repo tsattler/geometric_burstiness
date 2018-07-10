@@ -26,5 +26,7 @@ endif ()
 set( CMAKE_DEBUG_POSTFIX "d" )
 
 
+add_subdirectory (ext/pybind)
 add_subdirectory (src)
+
 

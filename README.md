@@ -71,7 +71,7 @@ If you are using this software for a scientific publication, you need to cite th
         booktitle={IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
         year={2016},
     }
-    
+
     @Inproceedings{Arandjelovic14a,
         author       = "Arandjelovi\'c, R. and Zisserman, A.",
         title        = "{DisLocation}: {Scalable} descriptor distinctiveness for location recognition",
@@ -80,13 +80,15 @@ If you are using this software for a scientific publication, you need to cite th
     }
 
 If you are interested in using this software **commercially**, please contact Torsten Sattler (torsten.sattler@inf.ethz.ch).
-    
+
 ## Compilation & Installation
 ### Requirements
 In order to compile the software, the following software packages are required:
  * CMake version 2.6 or higher (http://www.cmake.org/)
  * Eigen 3.2.1 or higher (http://eigen.tuxfamily.org/)
+      * Download. do cmake, make, make install.
  * FLANN (https://github.com/mariusmuja/flann)
+      * Download master branch. do cmake, make, make install.
  * C++11 or higher
 
 ### Compilation & Installation
@@ -100,7 +102,15 @@ In order to compile the software under Linux, follow the instructions below:
  * ```cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../release ..```
  * ```make -j```
  * ```make install```
-    
+
+### (Optional) Install Python Binding
+```
+
+pip install -e .
+# python setup.py install
+```
+
+
 This software was developer under Linux and has only been tested on Linux so far. However, it should also compile under Windows and Mac OS X as it does not depend on Linux-specific libraries. It might be necessary to adjust the CMake files though.
 
 # Running the Software

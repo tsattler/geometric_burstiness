@@ -400,7 +400,7 @@ int main (int argc, char **argv)
           query_descriptors, image_scores[r], &matches_sfm);
       if (num_matches < 4) continue;
 
-      FastSpatialMatching<FeatureGeometryAffine, Similarity5DOF> verifier;
+      FastSpatialMatching<AffineFeatureMatch, FeatureGeometryAffine, Similarity5DOF> verifier;
 
       std::vector<std::pair<int, int> > inlier_ids;
       Transformation transform;

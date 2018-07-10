@@ -58,8 +58,8 @@ class FeatureGeometrySimilarity {
   int feature_id_;
   Eigen::Vector2f x_;  // The position of the feature.
   float scale_;
-  float orientation_;  // Follows VLFeats' convention of clockwise rotation.
-
+  float orientation_;  // Follows VLFeats' convention of clockwise rotation.  
+  
   // Returns an approximation of the are occupied by the feature.
   float GetArea() const {
     return 1.0f / sqrtf(4.0f / (scale_ * scale_ * scale_ * scale_));
@@ -87,6 +87,10 @@ class FeatureGeometryAffine {
   float a_;
   float b_;
   float c_;
+
+  void setPosition(float x, float y) {
+    x_ << x, y;
+  }
 
   // Returns the Matrix mapping the ellipse into a unit circle without altering
   // the up direction and its inverse. Returns false if the transformation could
