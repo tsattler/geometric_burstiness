@@ -452,10 +452,18 @@ class InvertedFile {
 
     int first_index_image = 0;
     int current_image_id = entries_[0].image_id;
+    int score_size = score_ref.size();
+    std::vector<double> num_vws(score_size,0.0);
+
     for (int i = 0; i < num_entries; ++i) {
       current_image_id = entries_[i].image_id;
-      score_ref[current_image_id] += idf_squared;
+      num_vws[current_image_id] += 1;
+    }       
+    for (int i = 0; i < score_size; ++i) {         
+      score_ref[i] += num_vws[i]*num_vws[i]*idf_squared;
     }
+
+    num_vws.clear();
     return true;
   }
 
